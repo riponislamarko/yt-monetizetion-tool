@@ -7,35 +7,40 @@ Extractor, Money Calculator, Shadowban Detector, and Thumbnail Downloader.
 > **How it works (read this first):** the official YouTube Data API v3 **cannot** detect
 > monetization, ads, or shadowbans. Those signals are derived from YouTube's private InnerTube
 > endpoints + page scraping; the Data API is an **optional enrichment** layer. **The app runs
-> fully without any API keys.** See [ARCHITECTURE.md](./ARCHITECTURE.md).
+> fully without any API keys.**
 
 ## Stack
 
 | Layer | Tech |
 |-------|------|
-| Web (`apps/web`) | Next.js 14 (App Router), TypeScript, Tailwind, TanStack Query, next-themes → **Vercel** |
-| API (`apps/api`) | Fastify 4, Zod + OpenAPI (Scalar), Pino, cheerio, InnerTube, googleapis, Playwright fallback → **container** |
+| Web (`apps/web`) | Next.js 14 (App Router), TypeScript, Tailwind, TanStack Query, next-themes |
+| API (`apps/api`) | Fastify 4, Zod + OpenAPI (Scalar), Pino, cheerio, InnerTube, googleapis, Playwright fallback |
 | Data | PostgreSQL (Drizzle ORM), Redis (cache · rate limit · quota counters) |
 | Shared | `@yt/validators` (Zod + types), `@yt/db` (schema/migrations), `@yt/config` (tsconfig base) |
 | Tooling | Turborepo + pnpm workspaces, Vitest + MSW, Playwright E2E |
 
 ## Prerequisites
 
-- Node 20+, pnpm 9 (`corepack enable`), Docker (for local Postgres + Redis).
+- **Node 20+** and **pnpm 9** (`corepack enable`).
+- **PostgreSQL 16** and **Redis 7** running locally. Install them with your OS package
+  manager — e.g. macOS: `brew install postgresql@16 redis && brew services start postgresql@16 && brew services start redis`;
+  Ubuntu: `sudo apt install -y postgresql redis-server`.
 
 ## Local setup (from scratch)
 
 ```bash
-# 1. Install
+# 1. Install dependencies
 pnpm install
 
-# 2. Start Postgres + Redis
-docker compose up -d postgres redis
+# 2. Make sure Postgres + Redis are running, then create the database
+createdb yttoolkit        # or: psql -c "CREATE DATABASE yttoolkit;"
 
 # 3. Configure env
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
-#   → set IP_HASH_SALT to a long random string. Data API keys are OPTIONAL.
+#   → set DATABASE_URL + REDIS_URL to your local instances
+#   → set IP_HASH_SALT to a long random string (openssl rand -hex 32)
+#   → Data API keys are OPTIONAL.
 
 # 4. Migrate the database (migrations are checked into packages/db/drizzle)
 pnpm --filter @yt/db migrate
@@ -46,12 +51,6 @@ pnpm dev            # turbo runs web (:3000) + api (:3001)
 
 - API docs (OpenAPI / Scalar): http://localhost:3001/api/docs
 - Health: http://localhost:3001/healthz · Readiness: http://localhost:3001/readyz
-
-### Run with Docker (api + infra)
-
-```bash
-docker compose up --build       # postgres + redis + api (runs migrations first)
-```
 
 ## YouTube Data API keys (optional enrichment)
 
@@ -64,14 +63,24 @@ come from the Data API** — keys only enrich.
 
 ## Production setup
 
-- **Postgres** — [Neon](https://neon.tech) serverless. Put the pooled connection string in
-  `DATABASE_URL`. Run `pnpm --filter @yt/db migrate` as a deploy step before the API starts.
-- **Redis** — [Upstash](https://upstash.com). Put the URL in `REDIS_URL`. (App still runs if
-  Redis is down — cache is fail-soft.)
-- **Web → Vercel.** Set `NEXT_PUBLIC_API_URL` to the deployed API URL.
-- **API → a container host (Railway/Fly/Render), NOT serverless.** The Playwright fallback
-  needs a real Chromium, which Vercel/Lambda can't run. The provided `apps/api/Dockerfile`
-  builds from the Playwright base image. See [ARCHITECTURE.md §6](./ARCHITECTURE.md).
+The whole stack is plain Node.js, so it deploys to a single VPS with system-installed Postgres,
+Redis, a process manager (PM2 or systemd), and Nginx for HTTPS.
+
+- **Postgres & Redis** — install and run them on the host (or use managed services such as
+  [Neon](https://neon.tech) for Postgres and [Upstash](https://upstash.com) for Redis). Put the
+  connection strings in `DATABASE_URL` / `REDIS_URL`. The app still runs if Redis is down —
+  cache is fail-soft.
+- **Build the web app** — `NEXT_PUBLIC_API_URL` is inlined at build time:
+  `NEXT_PUBLIC_API_URL=https://yourdomain.com pnpm --filter @yt/web build`.
+- **Run the processes** — the API runs from TypeScript source via `tsx` (no build step); the web
+  runs `next start`. Manage both with PM2 (`pm2 start ecosystem.config.cjs`) or systemd units.
+- **Reverse proxy** — Nginx proxies `/api/*` to the API (:3001) and everything else to the web
+  (:3000); add HTTPS with certbot (Let's Encrypt).
+- **Migrations** — run `pnpm --filter @yt/db migrate` as a deploy step before the API starts.
+
+> **Playwright note:** the API uses a headless-Chromium fallback for a few hard-to-scrape
+> surfaces. It is **optional** — all 8 tools work without it. For full fidelity install the
+> browser once with `npx playwright@1.49.1 install --with-deps chromium`.
 
 ## Tests
 
@@ -94,7 +103,7 @@ Sentry (errors, api + web), Axiom (log shipping, api), Arcjet (bot/abuse, api), 
 (analytics, web), next-intl (EN i18n, web), Framer Motion (web), and an `ADMIN_API_KEY`-gated
 admin route for per-IP rate-limit overrides. Each degrades gracefully — the app's default
 state (all Phase-2 env empty) is exactly the Phase-1 behavior. **BullMQ and Cloudflare R2 are
-intentionally omitted** (see [ARCHITECTURE §10](./ARCHITECTURE.md)).
+intentionally omitted.**
 
 ## Data retention & privacy
 

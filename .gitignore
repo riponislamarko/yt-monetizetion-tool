@@ -45,3 +45,7 @@ logs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Markdown docs — keep only README.md out of the repo
+*.md
+!README.md

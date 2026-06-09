@@ -1,4 +1,4 @@
-// PM2 process definitions for a native (no-Docker) VPS deploy. See DEPLOYMENT-NATIVE.md.
+// PM2 process definitions for a VPS deploy (API on :3001, web on :3000).
 //   pm2 start ecosystem.config.cjs && pm2 save
 //
 // Both apps run from their package dir via `pnpm start`. The API auto-loads apps/api/.env
