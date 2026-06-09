@@ -1,7 +1,7 @@
 import { Link2, MousePointerClick, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-/** "Enter URL → Pick a tool → Get results" — the 3-step process strip from ytlarge.com. */
+/** "Enter URL → Pick a tool → Get results" — a connected 3-step process timeline. */
 export function HowItWorks() {
   const t = useTranslations("Home");
   const steps = [
@@ -12,31 +12,46 @@ export function HowItWorks() {
 
   return (
     <section className="border-t border-border bg-muted/30">
-      <div className="container py-16">
+      <div className="container py-20 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("howTitle")}</h2>
-          <p className="mt-2 text-muted-foreground">{t("howSub")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            {t("howEyebrow")}
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{t("howTitle")}</h2>
+          <p className="mt-3 text-base text-muted-foreground">{t("howSub")}</p>
         </div>
-        <ol className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
-          {steps.map((step, i) => {
-            const Icon = step.icon;
-            return (
-              <li
-                key={step.title}
-                className="relative rounded-2xl border border-border bg-card p-6 text-center shadow-sm"
-              >
-                <span className="absolute right-4 top-4 text-2xl font-extrabold text-primary/15">
-                  {i + 1}
-                </span>
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{step.body}</p>
-              </li>
-            );
-          })}
-        </ol>
+
+        <div className="relative mx-auto mt-16 max-w-5xl">
+          {/* Connector line behind the step markers (desktop only). */}
+          <div
+            aria-hidden
+            className="absolute inset-x-[16%] top-8 hidden h-px bg-gradient-to-r from-border via-border to-border sm:block"
+          />
+          <ol className="grid gap-12 sm:grid-cols-3 sm:gap-8">
+            {steps.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <li
+                  key={step.title}
+                  className="group relative flex flex-col items-center text-center"
+                >
+                  <div className="relative z-10">
+                    <span className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-card text-primary shadow-sm transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-primary/40 group-hover:shadow-md">
+                      <Icon className="h-7 w-7" />
+                    </span>
+                    <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow ring-2 ring-background">
+                      {i + 1}
+                    </span>
+                  </div>
+                  <h3 className="mt-5 text-lg font-semibold tracking-tight">{step.title}</h3>
+                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                    {step.body}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   );
