@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
@@ -8,9 +8,17 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-bold">
-          <Logo className="h-8 w-8" />
-          <span className="text-lg tracking-tight sm:text-xl">{t("brand")}</span>
+        <Link href="/" aria-label={t("brand")} className="inline-flex items-center">
+          <span className="inline-flex rounded-lg bg-white px-2.5 py-1.5 shadow-sm ring-1 ring-black/5">
+            <Image
+              src="/logo.png"
+              alt={t("brand")}
+              width={1448}
+              height={332}
+              priority
+              className="h-6 w-auto sm:h-7"
+            />
+          </span>
         </Link>
         <nav className="flex items-center gap-1">
           <Link

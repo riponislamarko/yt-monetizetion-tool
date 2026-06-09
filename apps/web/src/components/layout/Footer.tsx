@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { TOOLS } from "@/lib/tools";
-import { Logo } from "./Logo";
 
 export function Footer() {
   const t = useTranslations("Footer");
@@ -17,9 +17,16 @@ export function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2 font-bold">
-              <Logo className="h-8 w-8" />
-              <span className="text-lg tracking-tight">{t("brand")}</span>
+            <Link href="/" aria-label={t("brand")} className="inline-flex">
+              <span className="inline-flex rounded-lg bg-white px-3 py-2 shadow-sm ring-1 ring-black/5">
+                <Image
+                  src="/logo.png"
+                  alt={t("brand")}
+                  width={1448}
+                  height={332}
+                  className="h-7 w-auto"
+                />
+              </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               {t("tagline")}
