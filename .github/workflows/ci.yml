@@ -101,4 +101,6 @@ jobs:
           command_timeout: 20m
           script: |
             cd /home/devarko/htdocs/devarko.xyz/youtube-tool
+            git fetch --all --prune
+            git reset --hard origin/main
             bash scripts/deploy.sh
