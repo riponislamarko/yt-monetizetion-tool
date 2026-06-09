@@ -76,26 +76,29 @@ jobs:
           IP_HASH_SALT: ci-salt
           NEXT_PUBLIC_API_URL: http://localhost:3001
 
-  # Deploy split (§7, §11): web → Vercel (serverless OK), api → container host (NOT serverless,
-  # Playwright needs a real browser). Gated on the main branch after the build job is green.
+  # Auto-deploy to the VPS over SSH once CI is green on a push to main.
+  # The whole stack (web + api) runs on one host via PM2; the deploy script pulls,
+  # installs, migrates, rebuilds the web app, and restarts PM2.
+  #
+  # Required repo secrets (Settings → Secrets and variables → Actions):
+  #   VPS_HOST     — server IP or hostname (e.g. 165.101.189.201)
+  #   VPS_USER     — SSH user (e.g. root)
+  #   VPS_SSH_KEY  — the PRIVATE deploy key (full contents, incl. BEGIN/END lines)
+  #   VPS_PORT     — SSH port (optional, defaults to 22)
   deploy:
     needs: build-and-test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy web to Vercel
-        run: echo "vercel deploy --prod --cwd apps/web --token $VERCEL_TOKEN"
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
-      - name: Run DB migrations against prod
-        run: echo "pnpm --filter @yt/db migrate"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-      - name: Deploy api container to Railway
-        run: echo "railway up --service api"
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      - name: Deploy over SSH (pull · build · migrate · pm2 restart)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script_stop: true
+          command_timeout: 20m
+          script: |
+            cd /home/devarko/htdocs/devarko.xyz/youtube-tool
+            bash scripts/deploy.sh
