@@ -1,13 +1,47 @@
+# Dependencies
 node_modules/
+legacy/node_modules/
+.pnpm-store/
+
+# Build outputs
 dist/
+build/
+out/
 .next/
 .turbo/
+*.tsbuildinfo
+
+# Test & coverage
 coverage/
-*.log
+playwright-report/
+test-results/
+
+# Environment & secrets
 .env
 .env.*
 !.env.example
+
+# Logs & process managers
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+.pm2/
+
+# Caches
+.cache/
+.eslintcache
+
+# Deploy platforms
+.vercel
+.fly/
+
+# Editor / IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# OS files
 .DS_Store
-playwright-report/
-test-results/
-legacy/node_modules/
+Thumbs.db
