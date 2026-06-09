@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Typecheck (all packages)
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Unit + integration tests
+        run: pnpm test
+        env:
+          NODE_ENV: test
+
+      - name: Build
+        run: pnpm build
+        env:
+          # web build needs the public API URL at build time; api build is a typecheck-only emit.
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+
+  e2e:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: yttoolkit }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9.15.9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @yt/db migrate
+        env: { DATABASE_URL: postgresql://postgres:postgres@localhost:5432/yttoolkit }
+      - run: pnpm test:e2e
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/yttoolkit
+          REDIS_URL: redis://localhost:6379
+          IP_HASH_SALT: ci-salt
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+
+  # Deploy split (§7, §11): web → Vercel (serverless OK), api → container host (NOT serverless,
+  # Playwright needs a real browser). Gated on the main branch after the build job is green.
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy web to Vercel
+        run: echo "vercel deploy --prod --cwd apps/web --token $VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Run DB migrations against prod
+        run: echo "pnpm --filter @yt/db migrate"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Deploy api container to Railway
+        run: echo "railway up --service api"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

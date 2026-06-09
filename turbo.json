@@ -1,0 +1,57 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "PORT",
+    "CORS_ORIGIN",
+    "IP_HASH_SALT",
+    "YOUTUBE_API_KEY_1",
+    "YOUTUBE_API_KEY_2",
+    "YOUTUBE_API_KEY_3",
+    "YOUTUBE_API_KEY_4",
+    "YOUTUBE_API_KEY_5",
+    "NEXT_PUBLIC_API_URL",
+    "SENTRY_DSN",
+    "NEXT_PUBLIC_SENTRY_DSN",
+    "ARCJET_KEY",
+    "AXIOM_DATASET",
+    "AXIOM_TOKEN",
+    "R2_ACCOUNT_ID",
+    "R2_ACCESS_KEY_ID",
+    "R2_SECRET_ACCESS_KEY",
+    "R2_BUCKET_NAME",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
+    "ADMIN_API_KEY",
+    "RATE_LIMIT_MAX",
+    "RATE_LIMIT_WINDOW",
+    "LOG_LEVEL",
+    "LOOKUP_RETENTION_DAYS",
+    "SENTRY_ORG",
+    "SENTRY_PROJECT",
+    "SENTRY_AUTH_TOKEN"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    }
+  }
+}

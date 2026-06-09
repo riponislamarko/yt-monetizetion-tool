@@ -1,0 +1,77 @@
+{
+  "Header": {
+    "brand": "TubeIntel",
+    "allTools": "All Tools"
+  },
+  "Footer": {
+    "brand": "TubeIntel",
+    "tagline": "A free suite of analytics tools for YouTube channels and videos. Built for educational and analytical use.",
+    "tools": "Tools",
+    "more": "More",
+    "disclaimer": "Estimates are approximate and for informational purposes only. This tool is not affiliated with, endorsed by, or sponsored by YouTube or Google.",
+    "copyright": "© {year} TubeIntel."
+  },
+  "Home": {
+    "badge": "8 free tools · no sign-up required",
+    "heroTitle": "Unlock the full potential of your YouTube channel",
+    "heroSubtitle": "A comprehensive suite of tools designed for creators of all levels. Unlock deeper insights and optimize your content with powerful monetization checks and detailed analytics.",
+    "searchPlaceholder": "Paste a YouTube channel or video URL…",
+    "searchButton": "Check now",
+    "searchHint": "Try a channel link, @handle, or video URL — no account needed.",
+    "primaryHeading": "Core tools",
+    "primarySub": "The essentials for analyzing any channel or video.",
+    "secondaryHeading": "More tools",
+    "secondarySub": "Extract tags, estimate earnings and more.",
+    "category": "YouTube",
+    "howTitle": "How it works",
+    "howSub": "Three steps, no sign-up.",
+    "step1Title": "Enter a URL",
+    "step1Body": "Paste any YouTube channel, handle or video link.",
+    "step2Title": "Pick a tool",
+    "step2Body": "Choose from monetization, analytics, tags and more.",
+    "step3Title": "Get results",
+    "step3Body": "See clear, sourced insights in seconds — free."
+  },
+  "Tools": {
+    "monetization-checker": {
+      "title": "Monetization Checker",
+      "short": "Is this channel or video monetized?",
+      "description": "Detect ads, join buttons and eligibility signals to estimate whether a YouTube channel or video is monetized."
+    },
+    "channel-id-finder": {
+      "title": "Channel ID Finder",
+      "short": "Get the UC… ID from any URL",
+      "description": "Resolve a handle, custom URL, username or video link into the canonical channel ID and channel details."
+    },
+    "data-viewer": {
+      "title": "Data Viewer",
+      "short": "Full metadata + derived metrics",
+      "description": "View rich metadata for a video or channel plus derived metrics like engagement rate and upload frequency."
+    },
+    "image-tool": {
+      "title": "Image Tool",
+      "short": "Avatars, banners & thumbnails",
+      "description": "Grab a channel's profile pictures and banner images, or a video's thumbnails, in every available size."
+    },
+    "tag-extractor": {
+      "title": "Tag Extractor",
+      "short": "Pull tags & keywords",
+      "description": "Extract the tags from a video or the keywords from a channel, ready to copy with a character counter."
+    },
+    "money-calculator": {
+      "title": "Money Calculator",
+      "short": "Estimate earnings & CPM",
+      "description": "Estimate potential YouTube earnings from a URL or manual inputs using per-country CPM and niche multipliers."
+    },
+    "shadowban-detector": {
+      "title": "Shadowban Detector",
+      "short": "Check channel visibility",
+      "description": "Run visibility checks to detect whether a channel may be shadowbanned or limited in search."
+    },
+    "thumbnail-downloader": {
+      "title": "Thumbnail Downloader",
+      "short": "Download video thumbnails",
+      "description": "Download a YouTube video's thumbnails in every resolution, with direct image links."
+    }
+  }
+}
