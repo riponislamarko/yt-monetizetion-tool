@@ -6,10 +6,10 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1rem",
-      // Single, consistent 1000px max width for the whole layout (header, content, footer).
-      // Full-width with padding below lg; locked to 1000px and centered from lg up.
-      screens: { lg: "1000px", xl: "1000px", "2xl": "1000px" },
+      padding: "1.5rem",
+      // Single, consistent 1400px max width for the whole layout (header, content, footer).
+      // Full-width with padding below xl; locked to 1400px and centered from xl up.
+      screens: { lg: "1400px", xl: "1400px", "2xl": "1400px" },
     },
     extend: {
       colors: {

@@ -22,14 +22,11 @@ export default function HomePage() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-[-30%] mx-auto h-[420px] max-w-3xl rounded-full bg-primary/10 blur-3xl"
         />
-        <div className="container relative py-20 text-center sm:py-28">
-          <p className="mx-auto mb-5 w-fit rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-            {t("badge")}
-          </p>
-          <h1 className="mx-auto max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-            {t("heroTitle")}
+        <div className="container relative py-24 text-center sm:py-32">
+          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+            {t("heroTitleLead")} <span className="text-primary">{t("heroTitleAccent")}</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground sm:text-lg">
             {t("heroSubtitle")}
           </p>
           <HeroSearch />
