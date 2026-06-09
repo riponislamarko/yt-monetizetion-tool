@@ -75,7 +75,7 @@ function ToolSection({
                 <Card className="flex h-full flex-col rounded-2xl transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 dark:bg-primary/20 dark:ring-primary/30">
                         <Icon className="h-6 w-6" />
                       </span>
                       <span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">

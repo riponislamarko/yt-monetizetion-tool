@@ -18,7 +18,7 @@ export function ToolPageShell({
   return (
     <div className="container py-10 sm:py-14">
       <div className="mb-8 flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-inset ring-primary/20 dark:bg-primary/20 dark:ring-primary/30">
           <Icon className="h-6 w-6" />
         </span>
         <div>
